@@ -1,5 +1,8 @@
 from django.db import models
+from django.core import urlresolvers
 from django.utils.translation import ugettext as _
+from django.template.defaultfilters import slugify
+
 
 #TODO: Make upload_to configurable
 
@@ -17,3 +20,14 @@ class ComicPost(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(ComicPost, self).save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return urlresolvers.reverse('comic-detail', kwargs={
+            'year': self.published.year,
+            'month': self.published.month,
+            'day': self.published.day,
+            'slug': self.slug })
