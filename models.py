@@ -1,15 +1,19 @@
 from django.db import models
 from django.core import urlresolvers
 from django.utils.translation import ugettext as _
+from django.conf import settings
 from django.template.defaultfilters import slugify
 
 
-#TODO: Make upload_to configurable
+try:
+    UPLOAD_TO = settings.PARIAH_UPLOAD_TO
+except AttributeError:
+    UPLOAD_TO = 'comics'
 
 class ComicPost(models.Model):
     '''A single comic post.'''
 
-    image = models.ImageField(upload_to='comics')
+    image = models.ImageField(upload_to=UPLOAD_TO)
     title = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(editable=False)
 
@@ -17,6 +21,13 @@ class ComicPost(models.Model):
     published = models.DateTimeField(_('Publish time'))
     last_modified = models.DateTimeField(
         _('Last modified time'), auto_now=True)
+
+    @property
+    def image_url(self):
+        return '%(MEDIA_URL)s%(image)s' % {
+            'MEDIA_URL': settings.MEDIA_URL,
+            'image': self.image
+            }
 
     def __unicode__(self):
         return self.title
