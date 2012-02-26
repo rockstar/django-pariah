@@ -3,8 +3,6 @@ from django.contrib import admin
 from pariah import models
 
 
-#TODO: Implement a "Publish" action
-
 class ComicPostAdmin(admin.ModelAdmin):
     '''Admin for `pariah.models.ComicPost`'''
     actions_on_top = True
