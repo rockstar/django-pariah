@@ -24,15 +24,17 @@ class ComicView(generic.DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(ComicView, self).get_context_data(*args, **kwargs)
         comic = context['comic']
-        context['first'] = models.ComicPost.objects.order_by('-published')[0]
+        context['first'] = models.ComicPost.objects.order_by(
+            'published').filter(published__lt=datetime.now)[0]
         try:
             context['prev'] = models.ComicPost.objects.order_by(
-                'published').filter(published__lt=comic.published)[0]
+                '-published').filter(
+                    published__lt=comic.published)[0]
         except IndexError:
             pass
         try:
             context['next'] = models.ComicPost.objects.order_by(
-                '-published').filter(
+                'published').filter(
                     published__lt=datetime.now,
                     published__gt=comic.published)[0]
         except IndexError:
