@@ -14,15 +14,15 @@ class ComicsView(generic.ListView):
     template_name = 'pariah/comic_list.html'
 
 
-class ComicView(generic.DetailView):
-    '''Generic view for a single `pariah.models.ComicPost` instance.'''
+class ComicViewBase(generic.DetailView):
+    '''Base class for comic views.'''
 
     context_object_name = 'comic'
     queryset = models.ComicPost.objects.filter(published__lt=datetime.now)
     template_name = 'pariah/comic_detail.html'
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ComicView, self).get_context_data(*args, **kwargs)
+        context = super(ComicViewBase, self).get_context_data(*args, **kwargs)
         comic = context['comic']
         context['first'] = models.ComicPost.objects.order_by(
             'published').filter(published__lt=datetime.now)[0]
@@ -42,3 +42,15 @@ class ComicView(generic.DetailView):
         context['last'] = models.ComicPost.objects.order_by(
             '-published').filter(published__lt=datetime.now)[0]
         return context
+
+
+class ComicIndexView(ComicViewBase):
+    '''Generic view for the most recent `pariah.models.ComicPost` instance.'''
+
+    def get_object(self):
+        return models.ComicPost.objects.order_by(
+            '-published').filter(published__lt=datetime.now)[0]
+
+
+class ComicView(ComicViewBase):
+    '''Generic view for a single `pariah.models.ComicPost` instance.'''
