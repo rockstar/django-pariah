@@ -15,7 +15,7 @@ class ComicPost(models.Model):
 
     image = models.ImageField(upload_to=UPLOAD_TO)
     title = models.CharField(max_length=200, blank=True)
-    slug = models.SlugField(editable=False)
+    slug = models.SlugField(max_length=200, editable=False)
 
     created = models.DateTimeField(_('Creation time'), auto_now_add=True)
     published = models.DateTimeField(_('Publish time'))
