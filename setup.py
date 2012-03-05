@@ -3,7 +3,7 @@ import setuptools
 
 setuptools.setup(
     name='django-pariah',
-    version='0.1',
+    version='0.2',
     packages=['pariah',],
     install_requires=[
         'django>1.2',
