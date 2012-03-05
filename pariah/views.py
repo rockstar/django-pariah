@@ -23,9 +23,14 @@ class ComicViewBase(generic.DetailView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(ComicViewBase, self).get_context_data(*args, **kwargs)
+        if context['comic'] is None:
+            return context
         comic = context['comic']
-        context['first'] = models.ComicPost.objects.order_by(
-            'published').filter(published__lt=datetime.now)[0]
+        try:
+            context['first'] = models.ComicPost.objects.order_by(
+                'published').filter(published__lt=datetime.now)[0]
+        except IndexError:
+            pass
         try:
             context['prev'] = models.ComicPost.objects.order_by(
                 '-published').filter(
@@ -39,8 +44,11 @@ class ComicViewBase(generic.DetailView):
                     published__gt=comic.published)[0]
         except IndexError:
             pass
-        context['last'] = models.ComicPost.objects.order_by(
-            '-published').filter(published__lt=datetime.now)[0]
+        try:
+            context['last'] = models.ComicPost.objects.order_by(
+                '-published').filter(published__lt=datetime.now)[0]
+        except IndexError:
+            pass
         return context
 
 
@@ -48,8 +56,11 @@ class ComicIndexView(ComicViewBase):
     '''Generic view for the most recent `pariah.models.ComicPost` instance.'''
 
     def get_object(self):
-        return models.ComicPost.objects.order_by(
-            '-published').filter(published__lt=datetime.now)[0]
+        try:
+            return models.ComicPost.objects.order_by(
+                '-published').filter(published__lt=datetime.now)[0]
+        except IndexError:
+            return None
 
 
 class ComicView(ComicViewBase):
