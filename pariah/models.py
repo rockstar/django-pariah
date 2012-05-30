@@ -10,12 +10,37 @@ try:
 except AttributeError:
     UPLOAD_TO = 'comics'
 
+class Comic(models.Model):
+    '''A collection of web comics.'''
+
+    owner = models.ForeignKey('auth.User')
+
+    title = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=100)
+
+    description = models.CharField(max_length=300)
+
+    created = models.DateTimeField(_('Creation time'), auto_now_add=True)
+
+    def __unicode__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Comic, self).save(*args, **kwargs)
+
+    #TODO: Add format info, tags, etc.
+
+
 class ComicPost(models.Model):
     '''A single comic post.'''
 
     image = models.ImageField(upload_to=UPLOAD_TO)
     title = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(max_length=200, editable=False)
+
+    comic = models.ForeignKey('Comic')
 
     created = models.DateTimeField(_('Creation time'), auto_now_add=True)
     published = models.DateTimeField(_('Publish time'))
