@@ -40,7 +40,7 @@ class ComicPost(models.Model):
     title = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(max_length=200, editable=False)
 
-    comic = models.ForeignKey('Comic')
+    comic = models.ForeignKey('Comic', related_name='posts')
 
     created = models.DateTimeField(_('Creation time'), auto_now_add=True)
     published = models.DateTimeField(_('Publish time'))
