@@ -10,15 +10,20 @@ from pariah import models
 class ComicModelTest(TestCase):
     '''Test for the Comic model.'''
 
+    def setUp(self):
+        self.user = User()
+        self.user.save()
+
+    def _make_comic(self):
+        comic = models.Comic()
+        comic.owner = self.user
+        return comic
+
     def test_slugify(self):
         title = 'Super fun test comic'
         slug = slugify(title)
 
-        user = User()
-        user.save()
-
-        comic = models.Comic()
-        comic.owner = user
+        comic = self._make_comic()
         comic.title = title
         comic.save()
 
@@ -28,11 +33,7 @@ class ComicModelTest(TestCase):
         title = 'Super fun test comic'
         slug = slugify(title)
 
-        user = User()
-        user.save()
-
-        comic = models.Comic()
-        comic.owner = user
+        comic = self._make_comic()
         comic.title = title
         comic.save()
 
@@ -40,6 +41,11 @@ class ComicModelTest(TestCase):
         comic.save()
 
         self.assertEqual(comic.slug, slug)
+
+    def test_posts(self):
+        comic = self._make_comic()
+
+        self.assertEqual(comic.posts.count(), 0)
 
 
 class ComicPostModelTest(TestCase):
