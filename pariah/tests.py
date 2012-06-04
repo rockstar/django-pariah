@@ -60,6 +60,24 @@ class ComicModelTest(TestCase):
 
         self.assertEqual(comic.posts.count(), 1)
 
+    def test_posts_unpublished(self):
+        comic = self._make_comic()
+        comic.save()
+
+        post = models.ComicPost()
+        post.title = 'First comic'
+        post.comic = comic
+        post.published = datetime.now() - timedelta(days=2)
+        post.save()
+
+        post2 = models.ComicPost()
+        post2.title = 'Second comic'
+        post2.comic = comic
+        post2.published = datetime.now() + timedelta(days=2)
+        post2.save()
+
+        self.assertEqual(comic.posts.count(), 1)
+
 
 class ComicPostModelTest(TestCase):
     '''Test for the ComicPost model.'''

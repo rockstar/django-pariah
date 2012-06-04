@@ -32,6 +32,12 @@ class Comic(models.Model):
             self.slug = slugify(self.title)
         super(Comic, self).save(*args, **kwargs)
 
+    @property
+    def posts(self):
+        posts = self._posts.order_by('published').filter(
+            published__lt=datetime.now)
+        return posts
+
     #TODO: Add format info, tags, etc.
 
 
@@ -42,7 +48,7 @@ class ComicPost(models.Model):
     title = models.CharField(max_length=200, blank=True)
     slug = models.SlugField(max_length=200, editable=False)
 
-    comic = models.ForeignKey('Comic', related_name='posts')
+    comic = models.ForeignKey('Comic', related_name='_posts')
 
     created = models.DateTimeField(_('Creation time'), auto_now_add=True)
     published = models.DateTimeField(_('Publish time'))
