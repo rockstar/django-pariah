@@ -75,19 +75,14 @@ class ComicPost(models.Model):
     @property
     def next(self):
         try:
-            next_post = self.comic.posts.order_by('published').filter(
-                 published__lt=datetime.now,
-                 published__gt=self.published)[0]
-            return next_post
+            return self.comic.posts.filter(published__gt=self.published)[0]
         except IndexError:
             return None
 
     @property
     def prev(self):
         try:
-            prev_post = self.comic.posts.order_by('published').filter(
-                 published__lt=self.published)[0]
-            return prev_post
+            return self.comic.posts.filter(published__lt=self.published)[0]
         except IndexError:
             return None
 
