@@ -66,6 +66,15 @@ class ComicPost(models.Model):
         except IndexError:
             return None
 
+    @property
+    def prev(self):
+        try:
+            prev_post = self.comic.posts.order_by('published').filter(
+                 published__lt=self.published)[0]
+            return prev_post
+        except IndexError:
+            return None
+
     def __unicode__(self):
         return self.title
 

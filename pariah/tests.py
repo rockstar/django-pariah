@@ -74,10 +74,28 @@ class ComicPostModelTest(TestCase):
         post2 = models.ComicPost()
         post2.title = 'Second comic'
         post2.comic = self.comic
-        post2.published = datetime.now() - timedelta(days=2)
+        post2.published = datetime.now() - timedelta(days=1)
         post2.save()
 
         self.assertEqual(post.next, post2)
+
+    def test_prev(self):
+        post = self._make_post()
+        post.save()
+
+        post2 = models.ComicPost()
+        post2.title = 'Second comic'
+        post2.comic = self.comic
+        post2.published = datetime.now() - timedelta(days=1)
+        post2.save()
+
+        self.assertEqual(post2.prev, post)
+
+    def test_prev_none(self):
+        post = self._make_post()
+        post.save()
+
+        self.assertEqual(post.prev, None)
 
     def test_save_slug(self):
         title = 'Super fun test comic'
