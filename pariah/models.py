@@ -33,6 +33,16 @@ class Comic(models.Model):
         super(Comic, self).save(*args, **kwargs)
 
     @property
+    def first(self):
+        return self.posts[0]
+
+    @property
+    def last(self):
+        # No support for negative indexing... :(
+        count = self.posts.count()
+        return self.posts[count-1]
+
+    @property
     def posts(self):
         posts = self._posts.order_by('published').filter(
             published__lt=datetime.now)
