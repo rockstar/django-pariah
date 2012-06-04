@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.core import urlresolvers
 from django.utils.translation import ugettext as _
@@ -53,6 +55,16 @@ class ComicPost(models.Model):
             'MEDIA_URL': settings.MEDIA_URL,
             'image': self.image
             }
+
+    @property
+    def next(self):
+        try:
+            next_post = self.comic.posts.order_by('published').filter(
+                 published__lt=datetime.now,
+                 published__gt=self.published)[0]
+            return next_post
+        except IndexError:
+            return None
 
     def __unicode__(self):
         return self.title

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
@@ -45,6 +45,13 @@ class ComicModelTest(TestCase):
 class ComicPostModelTest(TestCase):
     '''Test for the ComicPost model.'''
 
+    def _make_post(self):
+        post = models.ComicPost()
+        post.title = 'First comic'
+        post.comic = self.comic
+        post.published = datetime.now() - timedelta(days=2)
+        return post
+
     def setUp(self):
         self.user = User()
         self.user.save()
@@ -53,6 +60,24 @@ class ComicPostModelTest(TestCase):
         self.comic.owner = self.user
         self.comic.title = 'Test comic'
         self.comic.save()
+
+    def test_next_none(self):
+        post = self._make_post()
+        post.save()
+
+        self.assertEqual(post.next, None)
+
+    def test_next(self):
+        post = self._make_post()
+        post.save()
+
+        post2 = models.ComicPost()
+        post2.title = 'Second comic'
+        post2.comic = self.comic
+        post2.published = datetime.now() - timedelta(days=2)
+        post2.save()
+
+        self.assertEqual(post.next, post2)
 
     def test_save_slug(self):
         title = 'Super fun test comic'
